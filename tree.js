@@ -14,8 +14,8 @@ function Tree(array){
     let sortedArray = mergeSort(removeDuplicate);
       
     /*
-    *function that accept sorted array and return bts tree by 
-    *find the middle then make left and right subtree recursively
+    *function that accept sorted array and return bst by 
+    *finding the middle then make left and right subtree recursively
     */
     let arrayToBts = function(array, start, end){
         //base case
@@ -46,10 +46,7 @@ function Tree(array){
   /**
    * function that check root and new node 
    * if root greater than newnode go to left side of root else go right side
-   * recursively till we found null value and set it to newnode
-   * @param  node 
-   * @param  newNode 
-   * 
+   * recursively till we found null value and set it to newnode 
    */
   const insertValue = function(node , newNode){
     if(node.data > newNode.data){
@@ -80,6 +77,7 @@ function Tree(array){
     }
     
   };
+  //function that remove node by checking if the node is leaf node,has single child or have right and left children
   const removeNode = function(node, value){
     //base case
     if(node === null) return null
@@ -125,7 +123,7 @@ function Tree(array){
   function deleteItem(value){
     root = removeNode(root, value)
   };
-  //function that accept node and value search if that value exist return node else return false
+  //function that accept node and value search if that value exist return node else return null
   function findNode(node, value){
     if(node === null) return null
     if(node.data > value){
@@ -143,36 +141,46 @@ function Tree(array){
   function find(value){
     return findNode(root, value)
   };
-  function treeHeight(node){
-   if(node === null) return 0
-   else{
-    let leftHeight = treeHeight(node.left);
-    let righHeight = treeHeight(node.right);
-    if(leftHeight > righHeight){
-        return (leftHeight + 1)
-    }
-    else{
-        return (righHeight + 1)
-    }
-   }
-
-  };
-  function printLevel(node, level){
+    //function that count left and right subtree of given node
+    function treeHeight(node){
+        if(node === null) return -1
+        else{
+            let leftHeight = treeHeight(node.left);
+            let righHeight = treeHeight(node.right);
+            if(leftHeight > righHeight){
+                return (leftHeight + 1)
+            }
+            else{
+                return (righHeight + 1)
+            }
+        }
+    };
+    function height(node){
+        return treeHeight(find(node));
+    };
+    //function that help to print levlorder accept array,level of tree and node
+  function printLevel(node, level, result){
     if(node === null) return null
     if(level === 1){
-        console.log(node.data + '')
+        //console.log(node.data + '')
+        result.push(node.data)
     }
     else if(level > 1){
-        printLevel(node.left, level -1);
-        printLevel(node.right, level - 1);
+        printLevel(node.left, level -1, result);
+        printLevel(node.right, level - 1, result);
     }
+   
   };
+  //function that pront levelorder recursively
   function levelOrderRec(){
+    const result = []
     let height = treeHeight(root);
-    for(let i = 1; i < height; i++){
-        printLevel(root, i)
+    for(let i = 1; i < height + 2; i++){
+       printLevel(root, i, result);
     }
-  }
+    return result
+  };
+  //function that print levelorder using iterative method
   function levelOrder(callback){
     if(root === null) return
       let queue = [];
@@ -195,11 +203,10 @@ function Tree(array){
       }
      return result
     };
+    //function to traverse tree inorder return array accept optional callback
     function inOrderTraverse(node, callback){
         let result = []
         if(node !== null){
-           
-            
             result.push(...inOrderTraverse(node.left, callback))
             result.push(node.data)
             if(callback){
@@ -209,6 +216,7 @@ function Tree(array){
         }
         return result
     };
+    //function that accepth optional callback and treverse in preorder return array
     function preOrderTraverse(node, callback){
         let result = []
         if(node !== null){
@@ -221,6 +229,7 @@ function Tree(array){
         }
         return result
     };
+    //function traverse tree in post order,accept optional callback return array 
     function postOrderTraverse(node, callback){
         let result = []
         if(node !== null){
@@ -242,6 +251,7 @@ function Tree(array){
      function postOrder(callback){
         return postOrderTraverse(root, callback)
      };
+     //function return the depth of node
      function findDepth(node, value){
         if (node === null) return -1;
         if(node.data === value)return 0
@@ -256,87 +266,22 @@ function Tree(array){
         return -1;
      };
     function depth(node){
-     return findDepth(root, node)
+     return findDepth(root, node);
     };
-    function findHeight(node, value){
-        if (node === null) {
-            return 0; // Node not found
-        }
-    
-        if (node.data === value) {
-            return 1; // Height of the found node
-        }
-        const leftHeight = findHeight(node.left, value);
-        const rightHeight = findHeight(node.right, value);
-        if (leftHeight !== 0) {
-            return leftHeight + 1;
-        } else if (rightHeight !== 0) {
-            return rightHeight + 1;
-        } else {
-            return 0
-        }
-    };
-    function height(node){
-        return findHeight(root, node)
-    };
-    function getHeight(node) {
-        if (!node) return 0;
-    
-        const leftHeight = getHeight(node.left);
-        const rightHeight = getHeight(node.right);
-    
-        return Math.max(leftHeight, rightHeight) + 1;
-    };
-    function isBalanced(node) {
-        if (!node) return true;
-        const leftHeight = treeHeight(node.left);
-        const rightHeight = treeHeight(node.right);
+    function isBalanced() {
+        if (!this.root) return true;
+        const leftHeight = treeHeight(this.root.left);
+        const rightHeight = treeHeight(this.root.right);
         return Math.abs(leftHeight - rightHeight) <= 1;
-    }
-    function balance(){
-        
-        };
+    };
     function rebalance(){
         let traverse = inOrder();
-        console.log(traverse)
         this.root =  buildTree(traverse);
-    }
-    
+    };
     return{
-        root: root, prettyPrint, insert, deleteItem, find, levelOrder, treeHeight,
-         levelOrderRec, preOrder, inOrder , postOrder, depth , height, getHeight, isBalanced, rebalance
-
-    }
+     root, prettyPrint, insert, deleteItem, find, levelOrder, 
+         levelOrderRec, preOrder, inOrder , postOrder, depth ,
+          height, isBalanced, rebalance
+        }
 }
-let arr = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9,]
-let bts = Tree(arr)
-//console.log(bts.root)
-function p (a){
-    console.log(a)
-}
-//bts.insert(6)
-//console.log(bts.find(14))
-bts.prettyPrint(bts.root)
-console.log(bts.treeHeight(bts.find(23)))
-
-//console.log(bts.levelOrder())
-//bts.levelOrderRec()
-//console.log( bts.preOrder())
-//console.log( bts.inOrder())
-//console.log( bts.postOrder())
-//console.log(bts.depth(3))
-console.log(bts.height(1))
-console.log(bts.getHeight(23))
-console.log(bts.isBalanced(bts.root))
-bts.insert(100)
-bts.insert(120)
-bts.insert(130)
-bts.insert(140)
-console.log(bts.isBalanced(bts.root))
-bts.rebalance()
-console.log(bts.isBalanced(bts.root))
-console.log(bts.root)
-bts.prettyPrint(bts.root)
-
-//console.log(bts.root)
-//console.log(bts.treeHeight(bts.root))
+export {Tree}
