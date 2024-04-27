@@ -67,8 +67,9 @@ function Tree(array){
     }
   }
   function insert(value){
+    //return if the node exist
+    if(find(value) !== null) return
     let newNode = Node(value);
-    
     if(root === null){
         root = newNode;
     }
@@ -275,8 +276,10 @@ function Tree(array){
         return Math.abs(leftHeight - rightHeight) <= 1;
     };
     function rebalance(){
-        let traverse = inOrder();
-        this.root =  buildTree(traverse);
+        if(this.isBalanced() === false ){
+         let traverse = inOrder();
+         this.root =  buildTree(traverse);
+        }
     };
     return{
      root, prettyPrint, insert, deleteItem, find, levelOrder, 
